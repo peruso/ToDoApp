@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mx-5 my-4">
+  <h1>New</h1>
+</div>
+<form action="" method="post">{% csrf_token %}
+  <div class='card mb-3 mx-5'>
+    <div class='card-body'>
+      <div class="row">
+        <div class="col-sm-5">
+          <label for="{{ form.body.id_for_label }}">Todo:</label>
+          <!-- form.as_pを使わずにやっている。bootstrapへの掛け方が少し複雑になりそうに感じたため -->
+          {{ form.body }}
+        </div>
+        <div class="col-sm-4">
+          <label for="{{ form.due.id_for_label }}">Due:</label>
+          {{ form.due }}
+        </div>
+        <div class="col-sm-3">
+          <input type="submit" value="Save">
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<style>
+  /* Adjust the width of the body field */
+  #id_body {
+    width: 70%;
+  }
+</style>
+{% endblock content %}
+
+<!-- about id_for_label:body というフォーム フィールドがある場合、Django は for 属性が「id_body」に設定された HTML label 要素と、id 属性が「id_body」に設定された HTML input 要素を自動的に生成します。これにより、ラベルが入力要素に関連付けられ、ラベルをクリックすると入力要素がフォーカスされるようになります。
+
+提供されたコード スニペットでは、id_for_label を使用して label 要素の for 属性を生成し、{{ form.body }} を使用して input 要素の id 属性を生成しています。これにより、ラベルと入力要素が正しくリンクされ、ラベルをクリックすると入力要素がフォーカスされます。 -->
+
+
+
+<!-- about #id_body重要：djangoにおけるform fieldをhtmlで生成する際の特性: #id_body is a CSS selector that targets an HTML element with the id attribute set to "id_body". In the context of the code snippet we've been discussing, #id_body is used to apply a CSS rule to the input element for the body field of the form.
+
+When Django generates the HTML for a form field, it automatically generates an id attribute for the corresponding input element, using the format "id_{{ field_name }}". For example, the input element for the body field of a form might have an id attribute of "id_body".
+
+By using the CSS selector #id_body, we're selecting the input element with an id of "id_body", and applying the width rule to it. In this case, we're setting the width of the body input element to 70%. -->
+
+
+<!-- Django テンプレート言語では、%% と 二重カッコは異なる目的で使用される 2 つの異なる構文です。
+
+%% は、テンプレートのレンダリングを制御するために使用されるテンプレート タグに使用されます。テンプレート タグは、操作の実行、フローの制御、ブロックの定義などに使用できます。
+
+二重カッコ は、レンダリングされたテンプレートに動的コンテンツを出力するために使用されるテンプレート変数に使用されます。テンプレート変数は通常、コンテキスト変数の値、フォーム フィールド、または関数やメソッド呼び出しの結果を出力するために使用されます。-->
