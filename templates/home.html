@@ -9,25 +9,28 @@
   <!-- mb adds a margin of 1rem to the bottom of the card element -->
   <div class='card mb-3'>
     <div class='card-body'>
-      <div class="row">
+      <div class="row row-Show">
         <!-- col-sm- classes create a basic grid system -->
         <div class="col-sm-5">
-          <h5 class='card-title'><a href="">{{todo.body}}</a></h5>
+          <h5 class='card-title todo-body'><a href="">{{todo.body}}</a></h5>
         </div>
         <div class="col-sm-3">
-          <p class="'card-text"><small class='co
-            text-muted'>Due:{{todo.due}}</small></p>
+          <p class="'card-text"><small class='text-muted todo-due'>Due:{{todo.due}}</small></p>
         </div>
         <div class="col-sm-2">
-          <a class="btn btn-primary" href="{% url 'todo_edit' todo.pk %}" role="button">Edit</a>
+          <a class="btn btn-primary edit-todo" data-todo-id="{{todo.pk}}" data-todo-due="{{todo.due}}" href="#"
+            role="button">Edit</a>
           <!-- <input class='btn btn-primary' type='submit' value='Edit'> -->
         </div>
         <div class="col-sm-2">
           <a class="btn btn-danger delete-todo" data-todo-id="{{todo.pk}}" href="#">Delete</a>
+
           <!-- <form action="" method="post">{% csrf_token %} -->
+
           <!-- <input class='btn btn-danger' type='submit' value='Delete'> -->
           <!-- </form> -->
         </div>
+
       </div>
       <!-- <p><a href="">{{todo.body}}</a> Due:{{todo.due}}</p> -->
 

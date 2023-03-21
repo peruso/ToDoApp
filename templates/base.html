@@ -51,6 +51,7 @@
     crossorigin="anonymous"></script>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  {% csrf_token %}
   <script>
 
     //Actions from browser
@@ -60,6 +61,8 @@
         event.preventDefault();
         //  get the todo_id from the data-todo-id attribute.
         var todoId = $(this).data('todo-id');
+        console.log(this);
+        console.log(todoId);
         // send an AJAX POST request to the server with the todo_id data. 
         $.ajax({
           url: '/delete-todo/',
@@ -75,6 +78,107 @@
         })
 
       });
+      ///here we will have click event of edit to prepare textbox
+      // $(".edit-todo").click(function (event) {
+      //   event.preventDefault();
+      //   var todoId = $(this).data("todo-id");
+      //   var todoDue = $(this).siblings(".todo-due").text();
+
+      //   $(this).siblings(".todo-due").hide();
+      //   console.log(this);
+      //   console.log(todoId);
+      //   console.log(todoDue);
+
+      // })
+
+      //Action after pushing edit button 
+      $(".edit-todo").click(function (event) {
+        event.preventDefault();
+        var todoId = $(this).data("todo-id");
+        var todoBody = $(this).parent().prev().prev().find(".todo-body").text();
+        var todoDue = $(this).data("todo-due");
+
+
+        // $(this).parent().prev().prev().find(".todo-body").hide();
+        // $(this).parent().prev().find(".todo-due").hide();
+        $(this).parent().parent().hide();
+
+
+        console.log(todoId);
+        console.log(todoBody);
+        //Form for editing , later I need to put 'for' to label
+        // var formHtml = '<input type="text" class="form-control todo-body-edit" value="' + todoBody + '">' +
+        //   '<label for="">Due: </label>' + '<input type="text" class="form-control todo-due-edit" value="' + todoDue + '">' +
+        //   '<button class="btn btn-success save-todo" data-todo-id="' + todoId + '">Save</button>' +
+        //   '<button class="btn btn-secondary cancel-todo">Cancel</button>';
+
+        var formHtml = '<div class="row row-Hide">' +
+          '<div class="col-sm-5">' +
+          '<input type="text" class="form-control todo-body-edit" value="' + todoBody + '" style="width: 80%">' +
+          '</div>' +
+          '<div class="col-sm-3">' +
+          '<input type="text" class="form-control todo-due-edit" value="' + todoDue + '" style="width: 80%">' +
+          '</div>' +
+          '<div class="col-sm-2">' +
+          '<button class="btn btn-success save-todo" data-todo-id="' + todoId + '">Save</button>' +
+          '</div>' +
+          '<div class="col-sm-2">' +
+          '<button class="btn btn-secondary cancel-todo">Cancel</button>' +
+          '</div>' +
+          '</div>';
+
+
+
+        $(this).parent().parent().parent().append(formHtml);
+
+        //Action after pushing save button in the Edit form
+        $(".save-todo").click(function (event) {
+          event.preventDefault;
+          var $saveBtn = $(this);
+          var todoBodyEdit = $saveBtn.parent().prev().prev().find(".todo-body-edit").val();
+          var todoDueEdit = $saveBtn.parent().prev().find(".todo-due-edit").val();
+          var csrfToken = $("input[name='csrfmiddlewaretoken']").val();
+
+          console.log(todoId);
+          console.log(todoBodyEdit);
+          console.log(csrfToken);
+          console.log($(this).parent().parent().parent().find(".todo-body").text());
+          $.ajax({
+            url: '/edit-todo/',
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': csrfToken
+            },
+            //it seems to be possible to put key name as you like
+            data: {
+              // todo_id necessary? depend on what process we do at view?
+              todo_id: todoId,
+              todo_body: todoBodyEdit,
+              todo_due: todoDueEdit
+            },
+            //Have to adjust content!!!!!!!!!!
+            success: function (data) {
+              if (data['success']) {
+                console.log('Imhere');
+
+                $saveBtn.parent().parent().parent().find(".todo-body a").text(todoBodyEdit);
+                $saveBtn.parent().parent().parent().find(".todo-due").text("Due:" + todoDueEdit);
+                // $(this).parent().parent().parent().find(".row-Hide").hide();
+                // console.log(this);
+                $saveBtn.parent().parent().parent().find(".row-Hide").hide();
+                $saveBtn.parent().parent().parent().find(".row-Show").show();
+              }
+            }
+          })
+
+        })
+
+
+
+      });
+
+
+
 
     });
   </script>

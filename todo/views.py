@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView
+from datetime import datetime
 
 
 from django.urls import reverse_lazy
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .models import Todo
 
 
@@ -20,10 +21,12 @@ class TodoCreateView(CreateView):
     fields = ["body", "due"]
 
 
-class TodoUpdateView(UpdateView):
-    model = Todo
-    template_name = "todo_edit.html"
-    fields = ["body", "due"]
+# ajaxでやっているため下は現在不要
+
+# class TodoUpdateView(UpdateView):
+#     model = Todo
+#     template_name = "todo_edit.html"
+#     fields = ["body", "due"]
 
 
 # class TodoDeleteView(DeleteView):
@@ -41,6 +44,29 @@ def delete_todo(request):
             todo = Todo.objects.get(pk=todo_id)
             todo.delete()
             return JsonResponse({"success": True})
+        except Todo.DoesNotExist:
+            return JsonResponse({"success": False})
+
+
+@csrf_protect
+def edit_todo(request):
+
+    if request.method == "POST":
+        todo_id = request.POST["todo_id"]
+        # todo_id = request.POST.get('todo_id') this is same(to get info from dictionary using key)
+        todo_body = request.POST["todo_body"]
+        # todo_due = request.POST["todo_due"]
+        todo_due = datetime.strptime(request.POST["todo_due"], "%b. %d, %Y").strftime(
+            "%Y-%m-%d"
+        )
+
+        try:
+            todo = Todo.objects.get(pk=todo_id)
+            todo.body = todo_body
+            todo.due = todo_due
+            todo.save()
+            return JsonResponse({"success": True})
+
         except Todo.DoesNotExist:
             return JsonResponse({"success": False})
 
