@@ -55,10 +55,18 @@ def edit_todo(request):
         todo_id = request.POST["todo_id"]
         # todo_id = request.POST.get('todo_id') this is same(to get info from dictionary using key)
         todo_body = request.POST["todo_body"]
-        # todo_due = request.POST["todo_due"]
-        todo_due = datetime.strptime(request.POST["todo_due"], "%b. %d, %Y").strftime(
-            "%Y-%m-%d"
-        )
+        todo_due_b4conv = request.POST["todo_due"]
+        if "." in todo_due_b4conv:
+            todo_due = datetime.strptime(todo_due_b4conv, "%b. %d, %Y").strftime(
+                "%Y-%m-%d"
+            )
+        else:
+            todo_due = datetime.strptime(todo_due_b4conv, "%B %d, %Y").strftime(
+                "%Y-%m-%d"
+            )
+        # todo_due = datetime.strptime(request.POST["todo_due"], "%b. %d, %Y").strftime(
+        #     "%Y-%m-%d"
+        # )
 
         try:
             todo = Todo.objects.get(pk=todo_id)

@@ -5,12 +5,28 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Current File",
+      "name": "Python: Django",
       "type": "python",
       "request": "launch",
-      "program": "${file}",
+      // "python": "/Users/akenoyuta/.pyenv/shims/python",
+      "python": "/Users/akenoyuta/.local/share/virtualenvs/todo1-ncaOg_tZ/bin/python",
+      // "program": "${file}",
+      // "program": "${/Users/akenoyuta/Documents/My_Projects/todo1}/manage.py",
+      "program": "/Users/akenoyuta/Documents/My_Projects/todo1/manage.py",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+      "django": true,
+      "args": [
+        "runserver"
+      ],
     }
+    // {
+    //   "name": "Python: Current File",
+    //   "type": "python",
+    //   "request": "launch",
+    //   "program": "${file}",
+    //   "console": "integratedTerminal",
+    //   "justMyCode": true
+    // }
   ]
 }

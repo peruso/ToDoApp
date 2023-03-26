@@ -16,7 +16,6 @@
     <!-- my-5 class adds a margin of 3rem to the top and bottom of element -->
     <!-- <div class="nav-left">
       <h1 class="my-5"><a href="{% url 'home' %}">To Do List</a></h1>
-
     </div> -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary" data-bs-theme="dark">
       <div class="container-fluid  my-4 mx-4">
@@ -96,7 +95,9 @@
         event.preventDefault();
         var todoId = $(this).data("todo-id");
         var todoBody = $(this).parent().prev().prev().find(".todo-body").text();
-        var todoDue = $(this).data("todo-due");
+        // var todoDue = $(event.currentTarget).data("todo-due");
+        var todoDue = event.currentTarget.getAttribute("data-todo-due");
+
 
 
         // $(this).parent().prev().prev().find(".todo-body").hide();
@@ -104,7 +105,8 @@
         $(this).parent().parent().hide();
 
 
-        console.log(todoId);
+        console.log(event.currentTarget);
+        console.log(todoDue);
         console.log(todoBody);
         //Form for editing , later I need to put 'for' to label
         // var formHtml = '<input type="text" class="form-control todo-body-edit" value="' + todoBody + '">' +
@@ -140,7 +142,7 @@
           var csrfToken = $("input[name='csrfmiddlewaretoken']").val();
 
           console.log(todoId);
-          console.log(todoBodyEdit);
+          console.log(todoDueEdit);
           console.log(csrfToken);
           console.log($(this).parent().parent().parent().find(".todo-body").text());
           $.ajax({
@@ -165,11 +167,24 @@
                 $saveBtn.parent().parent().parent().find(".todo-due").text("Due:" + todoDueEdit);
                 // $(this).parent().parent().parent().find(".row-Hide").hide();
                 // console.log(this);
-                $saveBtn.parent().parent().parent().find(".row-Hide").hide();
+                var $editTodoBtn = $saveBtn.parent().parent().parent().find(".edit-todo");
+                $editTodoBtn.attr("data-todo-due", todoDueEdit);
+
                 $saveBtn.parent().parent().parent().find(".row-Show").show();
+                $saveBtn.parent().parent().parent().find(".row-Hide").remove();
               }
             }
           })
+
+        })
+        //Cancel btn function>>Hide edi
+        $(".cancel-todo").click(function (event) {
+          event.preventDefault;
+          var $cancelBtn = $(this);
+          console.log(this);
+          $cancelBtn.parent().parent().parent().find(".row-Show").show();
+          $cancelBtn.parent().parent().parent().find(".row-Hide").remove();
+
 
         })
 
