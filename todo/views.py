@@ -18,7 +18,7 @@ class TodoListView(ListView):
 class TodoCreateView(CreateView):
     model = Todo
     template_name = "todo_new.html"
-    fields = ["body", "due"]
+    fields = ["body", "status", "due"]
 
 
 # ajaxでやっているため下は現在不要
@@ -55,6 +55,7 @@ def edit_todo(request):
         todo_id = request.POST["todo_id"]
         # todo_id = request.POST.get('todo_id') this is same(to get info from dictionary using key)
         todo_body = request.POST["todo_body"]
+        todo_status = request.POST["todo_status"]
         todo_due_b4conv = request.POST["todo_due"]
         if "." in todo_due_b4conv:
             todo_due = datetime.strptime(todo_due_b4conv, "%b. %d, %Y").strftime(
@@ -71,6 +72,7 @@ def edit_todo(request):
         try:
             todo = Todo.objects.get(pk=todo_id)
             todo.body = todo_body
+            todo.status = todo_status
             todo.due = todo_due
             todo.save()
             return JsonResponse({"success": True})

@@ -11,15 +11,18 @@
     <div class='card-body'>
       <div class="row row-Show">
         <!-- col-sm- classes create a basic grid system -->
-        <div class="col-sm-5">
+        <div class="col-sm-4">
           <h5 class='card-title todo-body'><a href="">{{todo.body}}</a></h5>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
+          <p class="card-text todo-status">{{todo.status}}</p>
+        </div>
+        <div class="col-sm-2">
           <p class="'card-text"><small class='text-muted todo-due'>Due:{{todo.due}}</small></p>
         </div>
         <div class="col-sm-2">
-          <a class="btn btn-primary edit-todo" data-todo-id="{{todo.pk}}" data-todo-due="{{todo.due}}" href="#"
-            role="button">Edit</a>
+          <a class="btn btn-primary edit-todo" data-todo-id="{{todo.pk}}" data-todo-status="{{todo.status}}"
+            data-todo-due="{{todo.due}}" href="#" role="button">Edit</a>
           <!-- <input class='btn btn-primary' type='submit' value='Edit'> -->
         </div>
         <div class="col-sm-2">

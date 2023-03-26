@@ -94,9 +94,10 @@
       $(".edit-todo").click(function (event) {
         event.preventDefault();
         var todoId = $(this).data("todo-id");
-        var todoBody = $(this).parent().prev().prev().find(".todo-body").text();
+        var todoBody = $(this).parent().prev().prev().prev().find(".todo-body").text();
         // var todoDue = $(event.currentTarget).data("todo-due");
         var todoDue = event.currentTarget.getAttribute("data-todo-due");
+        var todoStatus = event.currentTarget.getAttribute("data-todo-status");
 
 
 
@@ -115,10 +116,18 @@
         //   '<button class="btn btn-secondary cancel-todo">Cancel</button>';
 
         var formHtml = '<div class="row row-Hide">' +
-          '<div class="col-sm-5">' +
+          '<div class="col-sm-4">' +
           '<input type="text" class="form-control todo-body-edit" value="' + todoBody + '" style="width: 80%">' +
           '</div>' +
-          '<div class="col-sm-3">' +
+          '<div class="col-sm-2">' +
+          // using ternary operator
+          '<select class="form-control todo-status-edit" style="width: 80%">' +
+          '<option value="not-started" ' + (todoStatus === 'not-started' ? 'selected' : '') + '>Not started</option>' +
+          '<option value="in-progress" ' + (todoStatus === 'in-progress' ? 'selected' : '') + '>In progress</option>' +
+          '<option value="completed" ' + (todoStatus === 'completed' ? 'selected' : '') + '>Completed</option>' +
+          '</select>' +
+          '</div>' +
+          '<div class="col-sm-2">' +
           '<input type="text" class="form-control todo-due-edit" value="' + todoDue + '" style="width: 80%">' +
           '</div>' +
           '<div class="col-sm-2">' +
@@ -137,12 +146,13 @@
         $(".save-todo").click(function (event) {
           event.preventDefault;
           var $saveBtn = $(this);
-          var todoBodyEdit = $saveBtn.parent().prev().prev().find(".todo-body-edit").val();
+          var todoBodyEdit = $saveBtn.parent().prev().prev().prev().find(".todo-body-edit").val();
+          var todoStatusEdit = $saveBtn.parent().prev().prev().find(".todo-status-edit").val();
           var todoDueEdit = $saveBtn.parent().prev().find(".todo-due-edit").val();
           var csrfToken = $("input[name='csrfmiddlewaretoken']").val();
 
-          console.log(todoId);
-          console.log(todoDueEdit);
+          console.log(todoBodyEdit);
+          console.log(todoStatusEdit);
           console.log(csrfToken);
           console.log($(this).parent().parent().parent().find(".todo-body").text());
           $.ajax({
@@ -156,6 +166,7 @@
               // todo_id necessary? depend on what process we do at view?
               todo_id: todoId,
               todo_body: todoBodyEdit,
+              todo_status: todoStatusEdit,
               todo_due: todoDueEdit
             },
             //Have to adjust content!!!!!!!!!!
@@ -164,11 +175,13 @@
                 console.log('Imhere');
 
                 $saveBtn.parent().parent().parent().find(".todo-body a").text(todoBodyEdit);
+                $saveBtn.parent().parent().parent().find(".todo-status").text(todoStatusEdit);
                 $saveBtn.parent().parent().parent().find(".todo-due").text("Due:" + todoDueEdit);
                 // $(this).parent().parent().parent().find(".row-Hide").hide();
                 // console.log(this);
                 var $editTodoBtn = $saveBtn.parent().parent().parent().find(".edit-todo");
                 $editTodoBtn.attr("data-todo-due", todoDueEdit);
+                $editTodoBtn.attr("data-todo-status", todoStatusEdit);
 
                 $saveBtn.parent().parent().parent().find(".row-Show").show();
                 $saveBtn.parent().parent().parent().find(".row-Hide").remove();

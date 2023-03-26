@@ -7,16 +7,20 @@
   <div class='card mb-3 mx-5'>
     <div class='card-body'>
       <div class="row">
-        <div class="col-sm-5">
+        <div class="col-sm-4">
           <label for="{{ form.body.id_for_label }}">Todo:</label>
           <!-- form.as_pを使わずにやっている。bootstrapへの掛け方が少し複雑になりそうに感じたため -->
           {{ form.body }}
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
+          <label for="{{ form.status.id_for_label }}">Status:</label>
+          {{form.status}}
+        </div>
+        <div class="col-sm-3">
           <label for="{{ form.due.id_for_label }}">Due:</label>
           {{ form.due }}
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
           <input type="submit" value="Save">
         </div>
       </div>
