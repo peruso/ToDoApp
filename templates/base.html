@@ -8,7 +8,7 @@
   <title>To Do List</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <!-- <link rel="stylesheet" href="{% static 'css/base.css' %}"> -->
 </head>
 
 <body>
@@ -29,8 +29,36 @@
             <a class="nav-link fs-3 text-danger-emphasis" href="{% url 'todo_new' %}">New Todo</a>
             <!-- <a class="nav-link" href="#">Pricing</a> -->
           </div>
+          <!-- Dropdown list for status -->
+          <div class="dropdown">
+            <button id="displayByStatus" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              Status
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="displayByStatus">
+              <li><a class="dropdown-item" href="#">All statuses</a></li>
+              <li><a class="dropdown-item" href="#">Not started</a></li>
+              <li><a class="dropdown-item" href="#">In progress</a></li>
+              <li><a class="dropdown-item" href="#">Completed</a></li>
+
+            </ul>
+
+          </div>
+          <!-- Dropdown list for sortin by due -->
+          <div class="dropdown">
+            <button id="sortByDue" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              Sort
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sortByDue">
+              <li><a class="dropdown-item" href="">Sort by Due</a></li>
+              <li><a class="dropdown-item" href="">Back to original</a></li>
+
+            </ul>
+
+          </div>
+          <!-- </div> -->
         </div>
-      </div>
     </nav>
 
   </header>
@@ -39,6 +67,11 @@
     {% block content %}
     {% endblock content %}
   </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
@@ -53,10 +86,97 @@
   {% csrf_token %}
   <script>
 
+
     //Actions from browser
     $(document).ready(function () {
+      console.log("clicked");
+      console.log("clicked");
+
+      // Sort by due 
+      $('.dropdown-menu .dropdown-item:first-child').off('click').click(function (event) {
+        event.preventDefault();//if no this writing, output of console.log disappear 
+
+        $.ajax({
+          url: '{% url "home" %}',
+          type: 'GET',
+          data: { 'sort': 'due' },
+          success: function (data) {
+            if (data['success']) {
+
+
+
+              const todos = JSON.parse(data.todos);
+              console.log(todos);
+              // const sortedTodos = todos.sort((a, b) => new Date(a.fields.due) - new Date(b.fields.due)); //client側で並べ替えるすべ!!
+
+              // var todos = JSON.parse('{{ object_list|safe }}');
+              // console.log(todos);
+              var formHtml = '<h1 class="my-5 text-primary">List</h1>';
+
+              for (var i = 0; i < todos.length; i++) {
+                var todo = todos[i];
+                formHtml += '<div class="card mb-3">' +
+                  '<div class="card-body">' +
+                  '<div class="row row-Show">' +
+                  '<div class="col-sm-4">' +
+                  '<h5 class="card-title todo-body"><a href="">' + todo.fields.body + '</a></h5>' +
+                  '</div>' +
+                  '<div class="col-sm-2">' +
+                  '<p class="card-text todo-status">' + todo.fields.status + '</p>' +
+                  '</div>' +
+                  '<div class="col-sm-2">' +
+                  '<p class="\'card-text\'"><small class="text-muted todo-due">Due:' + new Date(todo.fields.due).toISOString().slice(0, 10) + '</small></p>' +
+                  '</div>' +
+                  '<div class="col-sm-2">' +
+                  '<a class="btn btn-primary edit-todo" data-todo-id="' + todo.pk + '" data-todo-status="' + todo.fields.status +
+                  '"data-todo-due="' + new Date(todo.fields.due).toISOString().slice(0, 10) + '" href="#" role="button">Edit</a>' +
+                  '</div>' +
+                  '<div class="col-sm-2">' +
+                  '<a class="btn btn-danger delete-todo" data-todo-id="' + todo.pk + '" href="#">Delete</a>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>';
+              }
+
+              var container = document.querySelector('.container');
+              // container.innerHTML = formHtml;
+              while (container.firstChild) {
+                container.removeChild(container.firstChild);
+              }
+              $('.container').append(formHtml);
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+            else {
+              console.log('seemes to be failed');
+              console.log(data);
+            }
+          }
+        });
+
+
+      });
+
+
+
+
       // fclick envet listener to all delete lins. When a user clicks the link, we prevent the default behavior of the link 
-      $('.delete-todo').click(function (event) {
+      // $('.delete-todo').click(function (event) {
+      $(document).on('click', '.delete-todo', function (event) {
+
+        console.log("deleteclicked");
+
         event.preventDefault();
         //  get the todo_id from the data-todo-id attribute.
         var todoId = $(this).data('todo-id');
@@ -72,6 +192,7 @@
             //after http request return as success?
             if (data['success']) {
               $('[data-todo-id=' + todoId + ']').closest('.card').remove();
+              // console.log(data);
             }
           }
         })
@@ -91,12 +212,24 @@
       // })
 
       //Action after pushing edit button 
-      $(".edit-todo").click(function (event) {
+      // $(".edit-todo").click(function (event) {
+      $(document).on('click', '.edit-todo', function (event) {
+
+        console.log("clicked");
+        console.log("clicked");
+        console.log("clicked");
         event.preventDefault();
         var todoId = $(this).data("todo-id");
         var todoBody = $(this).parent().prev().prev().prev().find(".todo-body").text();
         // var todoDue = $(event.currentTarget).data("todo-due");
         var todoDue = event.currentTarget.getAttribute("data-todo-due");
+        var todoDueDate = new Date(todoDue);
+
+        var year = todoDueDate.getFullYear();
+        var month = todoDueDate.getMonth() + 1 < 10 ? '0' + (todoDueDate.getMonth() + 1) : todoDueDate.getMonth() + 1;
+        var day = todoDueDate.getDate() < 10 ? '0' + todoDueDate.getDate() : todoDueDate.getDate();
+        todoDue = year + '-' + month + '-' + day;
+
         var todoStatus = event.currentTarget.getAttribute("data-todo-status");
 
 
@@ -145,6 +278,7 @@
         //Action after pushing save button in the Edit form
         $(".save-todo").click(function (event) {
           event.preventDefault;
+          console.log('found it');
           var $saveBtn = $(this);
           var todoBodyEdit = $saveBtn.parent().prev().prev().prev().find(".todo-body-edit").val();
           var todoStatusEdit = $saveBtn.parent().prev().prev().find(".todo-status-edit").val();
@@ -152,7 +286,7 @@
           var csrfToken = $("input[name='csrfmiddlewaretoken']").val();
 
           console.log(todoBodyEdit);
-          console.log(todoStatusEdit);
+          console.log(todoDueEdit);
           console.log(csrfToken);
           console.log($(this).parent().parent().parent().find(".todo-body").text());
           $.ajax({

@@ -4,7 +4,9 @@
 <div class="container">
   <!-- my-5 class adds a margin of 3rem to the top and bottom of element -->
   <h1 class="my-5 text-primary">List</h1>
+
   {% for todo in object_list %}
+
   <!-- card class create flexible and extensible content containers -->
   <!-- mb adds a margin of 1rem to the bottom of the card element -->
   <div class='card mb-3'>
@@ -18,7 +20,7 @@
           <p class="card-text todo-status">{{todo.status}}</p>
         </div>
         <div class="col-sm-2">
-          <p class="'card-text"><small class='text-muted todo-due'>Due:{{todo.due}}</small></p>
+          <p class="'card-text"><small class='text-muted todo-due'>Due:{{todo.due|date:"Y-m-d"}}</small></p>
         </div>
         <div class="col-sm-2">
           <a class="btn btn-primary edit-todo" data-todo-id="{{todo.pk}}" data-todo-status="{{todo.status}}"

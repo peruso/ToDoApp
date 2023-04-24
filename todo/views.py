@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from datetime import datetime
+from django.core import serializers
 
 
 from django.urls import reverse_lazy
@@ -13,6 +14,38 @@ from .models import Todo
 class TodoListView(ListView):
     model = Todo
     template_name = "home.html"
+    context_object_name = "todos"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        # contents of qs: <QuerySet [<Todo: Buy SD Card>, <Todo: Clean Hair>, <Todo: Algongggggg34ed>, <Todo: fadfadf>, <Todo: Go to college>]>
+        sort_by = self.request.GET.get("sort")
+        # print(self.request) #output <WSGIRequest: GET '/?sort=due'>
+        # print(self.request.GET) #output <QueryDict: {'sort': ['due']}>
+
+        if sort_by == "due":
+            qs = qs.order_by("due")
+            # print(qs)#<QuerySet [<Todo: fadfadf>, <Todo: Buy SD Card>, <Todo: Go to college>, <Todo: Clean Hair>, <Todo: Algongggggg34ed>]>
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+
+            self.object_list = self.get_queryset()
+            context = self.get_context_data()
+            # print(context)
+            # {'paginator': None, 'page_obj': None, 'is_paginated': False, 'object_list': <QuerySet [<Todo: fadfadf>, <Todo: Buy SD Card>, <Todo: Go to college>, <Todo: Clean Hair>, <Todo: Algongggggg34ed>]>, 'todos': <QuerySet [<Todo: fadfadf>, <Todo: Buy SD Card>, <Todo: Go to college>, <Todo: Clean Hair>, <Todo: Algongggggg34ed>]>, 'view': <todo.views.TodoListView object at 0x1068fb0d0>}
+            # print(render(request, self.template_name, context)) #output <HttpResponse status_code=200, "text/html; charset=utf-8">    [23/Apr/2023 03:18:37] "GET /?sort=due HTTP/1.1" 200 18694
+
+            # return render(request, self.template_name, context) #これだと返されるものがhtmlの内容だった(dataに入るみたいな)
+            todos = serializers.serialize("json", context[self.context_object_name])
+            # print(todos)
+            # [{"model": "todo.todo", "pk": 2, "fields": {"body": "Buy SD Card", "due": "2023-08-16", "status": "not-started"}}, {"model": "todo.todo", "pk": 26, "fields": {"body": "Go to college", "due": "2023-08-30", "status": "in-progress"}}, {"model": "todo.todo", "pk": 16, "fields": {"body": "Clean Hair", "due": "2023-08-31", "status": "not-started"}}, {"model": "todo.todo", "pk": 18, "fields": {"body": "Algongggggg34ed", "due": "2023-09-20", "status": "not-started"}}]
+
+            return JsonResponse({"success": True, "todos": todos})
+
+        else:
+            return super().get(request, *args, **kwargs)
 
 
 class TodoCreateView(CreateView):
@@ -57,14 +90,17 @@ def edit_todo(request):
         todo_body = request.POST["todo_body"]
         todo_status = request.POST["todo_status"]
         todo_due_b4conv = request.POST["todo_due"]
-        if "." in todo_due_b4conv:
-            todo_due = datetime.strptime(todo_due_b4conv, "%b. %d, %Y").strftime(
-                "%Y-%m-%d"
-            )
-        else:
-            todo_due = datetime.strptime(todo_due_b4conv, "%B %d, %Y").strftime(
-                "%Y-%m-%d"
-            )
+        todo_due = datetime.strptime(todo_due_b4conv, "%Y-%m-%d").strftime("%Y-%m-%d")
+
+        # if "." in todo_due_b4conv:
+        #     todo_due = datetime.strptime(todo_due_b4conv, "%b. %d, %Y").strftime(
+        #         "%Y-%m-%d"
+        #     )
+        # else:
+        #     todo_due = datetime.strptime(todo_due_b4conv, "%B %d, %Y").strftime(
+        #         "%Y-%m-%d"
+        #     )
+
         # todo_due = datetime.strptime(request.POST["todo_due"], "%b. %d, %Y").strftime(
         #     "%Y-%m-%d"
         # )
